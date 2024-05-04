@@ -11,7 +11,6 @@ HOST_SERVER = 'localhost'
 HOST_CLIENT = '127.0.0.1'
 PORT = 50000
 
-
 def createInterface():
     def start_connections():
         NUM_CONNECTIONS = int(connections_entry.get())

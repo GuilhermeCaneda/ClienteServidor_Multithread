@@ -5,11 +5,11 @@ import socket
 import json
 
 #FUNÇÃO PARA CÁLCULO
-def leibniz(numbers):
+def leibniz(interval):
     resultNumber = 0.0
     evenNumber = 0.0
     oddNumber = 0.0
-    for i in range(numbers[0], numbers[1]):
+    for i in range(interval[0], interval[1]):
         number = (-1) ** i / ((2 * i) + 1)
         resultNumber += number
 
@@ -29,7 +29,7 @@ def connect(HOST, PORT):
     received_data = json.loads(data.decode())  
 
     #CALCULA E ENVIA RESULTADO LEIBNIZ
-    pi_Number, even_Number, odd_Number = leibniz(received_data)
+    calc_Number, even_Number, odd_Number = leibniz(received_data)
     s.sendall(str(even_Number).encode()) #ENVIA OS NUMEROS PARES
     s.sendall(str(odd_Number).encode()) #ENVIA OS NUMEROS IMPARES
-    s.sendall(str(pi_Number).encode()) #ENVIA O VALOR DE PI
+    s.sendall(str(calc_Number).encode()) #ENVIA O VALOR CALCULADO
