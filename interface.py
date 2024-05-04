@@ -6,6 +6,7 @@ from tkinter import ttk
 import client
 import server
 import multiprocessing
+import time
 
 HOST_SERVER = 'localhost'
 HOST_CLIENT = '127.0.0.1'
@@ -13,6 +14,7 @@ PORT = 50000
 
 def createInterface():
     def start_connections():
+        initialTime = time.time()
         NUM_CONNECTIONS = int(connections_entry.get())
         NUM_TERMS = int(terms_entry.get())
 
@@ -38,9 +40,14 @@ def createInterface():
         listOddNumber_server = listOddNumber_queue.get()
         listEvenNumber_server = listEvenNumber_queue.get() 
 
+        endTime = time.time()
         print('\n\nFinal Result:', finalResult_server)
+        print('Elapsed time (s):', (endTime-initialTime))
+
 
         finalResult_label_value.config(text=f"{finalResult_server}")
+        elapsedTime_label_value.config(text=f"{(endTime-initialTime)}")
+        
         for i in range(NUM_CONNECTIONS):
             connection_frame = ttk.LabelFrame(canvas, text=f'CONEXÃO {i+1}')
             canvas.create_window((0, i*140), window=connection_frame, anchor="nw")
@@ -77,7 +84,7 @@ def createInterface():
 
         canvas.update_idletasks()
         canvas.config(scrollregion=canvas.bbox("all"), yscrollcommand=scrollbar.set)
-        scrollbar.grid(row=4, column=2, sticky="ns")
+        scrollbar.grid(row=5, column=2, sticky="ns")
 
     root = tk.Tk()
     root.title("Connection Details")
@@ -88,6 +95,7 @@ def createInterface():
     connections_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
     connections_entry = ttk.Entry(main_frame)
     connections_entry.grid(row=0, column=1, padx=10, pady=5, sticky="ew")
+
     terms_label = ttk.Label(main_frame, text="Número de termos:")
     terms_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
     terms_entry = ttk.Entry(main_frame)
@@ -98,10 +106,16 @@ def createInterface():
     finalResult_label_value = ttk.Label(main_frame)
     finalResult_label_value.grid(row=2, column=1, padx=10, pady=5, sticky="ew")
 
+    elapsedTime_label_name = ttk.Label(main_frame, text="Tempo Decorrido (s):")
+    elapsedTime_label_name.grid(row=3, column=0, padx=10, pady=5, sticky="w")
+    elapsedTime_label_value = ttk.Label(main_frame)
+    elapsedTime_label_value.grid(row=3, column=1, padx=10, pady=5, sticky="ew")
+
+
     start_button = ttk.Button(main_frame, text="Start Connections", command=start_connections)
-    start_button.grid(row=3, column=0, columnspan=2, pady=10)
+    start_button.grid(row=4, column=0, columnspan=2, pady=10)
     canvas = tk.Canvas(main_frame)
-    canvas.grid(row=4, column=0, columnspan=2, sticky="nsew")
+    canvas.grid(row=5, column=0, columnspan=2, sticky="nsew")
     scrollbar = ttk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
     canvas.update_idletasks()
     canvas.config(scrollregion=canvas.bbox("all"), yscrollcommand=scrollbar.set)
