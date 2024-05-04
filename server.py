@@ -6,11 +6,11 @@ import multiprocessing
 
 resultPI = multiprocessing.Value('f', 0.0)
 
-def connection(conn_number, conn, ender, numbers, resultPI, listNumbers, listOdd, listEven):
-    print('\n\nClient:', conn_number, '/ Interval:', numbers)
+def connection(conn_number, conn, ender, interval, resultPI, listNumbers, listOdd, listEven):
+    print('\n\nClient:', conn_number, '/ Interval:', interval)
     print('Connected at', ender)
 
-    json_data = json.dumps(numbers)
+    json_data = json.dumps(interval)
     conn.sendall(json_data.encode()) # MANDA O INTERVALO
 
     data = conn.recv(1024)
@@ -43,8 +43,6 @@ def start(HOST, PORT, num_connections, num_terms, result_queue, ender_queue, int
     listNumbers = manager.list([0.0] * num_connections)
     listOdd = manager.list([0.0] * num_connections)
     listEven = manager.list([0.0] * num_connections)
-
-
     listInterval = []
     listEnder = []
 
