@@ -1,4 +1,3 @@
-
 #client.py
 
 import socket
@@ -28,8 +27,8 @@ def connect(HOST, PORT):
     data = s.recv(1024)
     received_data = json.loads(data.decode())  
 
-    #CALCULA E ENVIA RESULTADO LEIBNIZ
+    #REALIZA OS CÁLCULOS
     calc_Number, even_Number, odd_Number = leibniz(received_data)
-    s.sendall(str(even_Number).encode()) #ENVIA OS NUMEROS PARES
-    s.sendall(str(odd_Number).encode()) #ENVIA OS NUMEROS IMPARES
-    s.sendall(str(calc_Number).encode()) #ENVIA O VALOR CALCULADO
+
+    #ENVIA OS DADOS PARA O SERVIDOR
+    s.sendall(f"{even_Number} {odd_Number} {calc_Number}".encode())

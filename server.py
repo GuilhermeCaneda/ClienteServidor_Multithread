@@ -4,7 +4,7 @@ import socket
 import json
 import multiprocessing
 
-resultPI = multiprocessing.Value('f', 0.0)
+#resultPI = multiprocessing.Value('f', 0.0)
 
 def connection(conn_index, conn, ender, interval, resultPI, listCalcNumber, listOddNumber, listEvenNumber):
     print('\n\nClient:', (conn_index+1), '/ Interval:', interval)
@@ -12,20 +12,22 @@ def connection(conn_index, conn, ender, interval, resultPI, listCalcNumber, list
 
     json_data = json.dumps(interval)
     conn.sendall(json_data.encode()) # MANDA O INTERVALO
+
     data = conn.recv(1024)
-    evenNumber = float(data.decode()) # RECEBE OS PARES
-    data = conn.recv(1024)
-    oddNumber = float(data.decode()) # RECEBE Os impares
-    data = conn.recv(1024)
-    calcNumber = float(data.decode()) # RECEBE O RESULTADO DO PI
+    numbers = data.decode().split()
+    evenNumber = float(numbers[0])
+    oddNumber = float(numbers[1])
+    calcNumber = float(numbers[2])
 
     print(calcNumber, "from", ender)
     print('Even:', evenNumber)
     print('Odd:', oddNumber)
 
-    with resultPI.get_lock():
-        resultPI.value += calcNumber
-        print('PI: ', resultPI.value)
+    #with resultPI.get_lock():
+    #    resultPI.value += calcNumber
+    #    print('PI: ', resultPI.value)
+
+    resultPI.put(calcNumber)
 
     listCalcNumber[conn_index] = calcNumber
     listEvenNumber[conn_index] = evenNumber
@@ -44,6 +46,7 @@ def start(HOST, PORT, num_connections, num_terms, finalResult_queue, listEnderNu
     s.bind((HOST, PORT))
     s.listen()
 
+    resultPI = multiprocessing.Queue()
 
     processes = []
     for i in range(0, num_connections):
@@ -61,7 +64,11 @@ def start(HOST, PORT, num_connections, num_terms, finalResult_queue, listEnderNu
     for process in processes:
         process.join()
 
-    finalResult_queue.put(resultPI.value)
+    resultPI_value = 0.0
+    for i in range(num_connections):
+        resultPI_value += resultPI.get()
+
+    finalResult_queue.put(resultPI_value)
     listEnderNumber_queue.put(listEnderNumber) 
     listInterval_queue.put(listInterval)
     listCalcNumber_queue.put(list(listCalcNumber))
